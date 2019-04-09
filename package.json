@@ -1,0 +1,38 @@
+{
+  "name": "dcs-control",
+  "version": "1.0.0",
+  "description": "A REST API to manage your DCS World servers",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm run build && npm run serve",
+    "build": "tsc",
+    "serve": "node ./lib/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ked57/DCS-Control.git"
+  },
+  "author": "Ked57",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ked57/DCS-Control/issues"
+  },
+  "homepage": "https://github.com/Ked57/DCS-Control#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "rxjs": "^6.4.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/uuid": "^3.4.4",
+    "ava": "^1.4.1",
+    "prettier": "^1.16.4",
+    "typescript": "^3.4.2"
+  },
+  "ava": {
+    "files": [
+      "lib/tests/*.js"
+    ]
+  }
+}
