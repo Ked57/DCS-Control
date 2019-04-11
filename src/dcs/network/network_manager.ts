@@ -7,10 +7,12 @@ let connecting = false;
 let socket: net.Socket;
 
 const connect = (
-  options: net.NetConnectOpts,
+  port: number,
+  host: string,
   onData: (data: any) => void
-): Promise<any> => {
-  return new Promise<any>((resolve, reject) => {
+): Promise<number> => {
+  return new Promise<number>((resolve, reject) => {
+    const options = { port, host };
     connecting = true;
     const connectedObservable: Observable<Boolean> = new Observable(
       (observer: Observer<Boolean>) => {
@@ -29,7 +31,8 @@ const connect = (
             setTimeout(
               () =>
                 connect(
-                  options,
+                  port,
+                  host,
                   onData
                 ),
               5000
@@ -45,7 +48,8 @@ const connect = (
             setTimeout(
               () =>
                 connect(
-                  options,
+                  port,
+                  host,
                   onData
                 ),
               5000
@@ -61,7 +65,8 @@ const connect = (
           setTimeout(
             () =>
               connect(
-                options,
+                port,
+                host,
                 onData
               ),
             5000
@@ -72,7 +77,7 @@ const connect = (
       }
     );
     connectedObservable.subscribe({
-      next: value => (value ? resolve() : {}),
+      next: value => (value ? resolve(port) : {}),
       error: err => console.error(err)
     });
   });

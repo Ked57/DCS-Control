@@ -14,15 +14,15 @@ import Function from "./game/types/callback/function";
 import NoTimeout from "./game/types/callback/no_timeout";
 import { enQueue, initQueue } from "./queue/queue";
 
-const options = {
-  port: 15488,
-  host: "localhost"
-} as net.TcpSocketConnectOpts;
-
-const initDCSModule = () => {
+const initDCSModule = async (port: number): Promise<number> => {
   initQueue(networkSend);
+  setInterval(
+    () => send({}, () => console.log("server isn't dead yet"), "noTimeout"),
+    5000
+  );
   return connect(
-    options,
+    port,
+    "localhost",
     (data: any) => {
       try {
         receive(dataFromDcsJsonToObject(data.toString()));
@@ -63,7 +63,6 @@ const send = async (
 
 const receive = async (data: { [key: string]: any }) => {
   try {
-    console.log("received: ", data);
     await handlePayload(await validatePayload(data));
     return true;
   } catch (err) {

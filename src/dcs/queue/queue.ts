@@ -1,5 +1,4 @@
 import InputPayload from "../network/types/input_payload";
-import { networkSend } from "../network/network_manager";
 
 const queue: InputPayload[] = [];
 
@@ -13,12 +12,10 @@ const deQueue = (): InputPayload | undefined => {
 };
 
 const initQueue = (func: (payload: InputPayload) => void) => {
-  setInterval(() => processQueue(func).map(networkSend), 1000);
+  setInterval(() => processQueue().map(func), 1000);
 };
 
-const processQueue = (
-  func: (payload: InputPayload) => void
-): InputPayload[] => {
+const processQueue = (): InputPayload[] => {
   if (queue.length <= 0) {
     return [];
   }
@@ -27,8 +24,7 @@ const processQueue = (
     if (!payload) {
       return [];
     }
-    func(queue[0]);
-    return [...[payload], ...processQueue(func)];
+    return [...[payload], ...processQueue()];
   } catch (err) {
     console.error(err);
     return [];

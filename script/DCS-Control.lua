@@ -9,6 +9,8 @@ local io = base.io
 local table = base.table
 local type = base.type
 local pcall = base.pcall
+local math = base.math
+local assert = base.assert
 
 local JSON = loadfile("Scripts\\JSON.lua")()
 local socket = require("socket")
@@ -21,8 +23,20 @@ local dcsc = {
 }
 
 dcsc.scope = "127.0.0.1"
-dcsc.port = 15488
+dcsc.port = 15489 + math.random(5000)
 dcsc.bound = false
+
+dcsc.broadcastPort = 15488
+dcsc.broadcastPayload = {port = dcsc.port}
+dcsc.broadcaster = assert(socket.udp())
+
+if not dcsc.broadcaster then
+	net.log("error, could not initiate broadcaster")
+	return
+end
+
+dcsc.broadcaster:setpeername(dcsc.scope, dcsc.broadcastPort)
+dcsc.broadcaster:settimeout(0)
 
 dcsc.JSON = JSON
 dcsc.tcp = socket.tcp()
@@ -60,6 +74,8 @@ function dcsc.bind()
 	local bound, error = dcsc.tcp:bind(dcsc.scope, dcsc.port)
 	if not bound then
 		net.log("Could not bind: " .. error)
+		net.log("Trying another port")
+		dcsc.port = 15488 + math.random(5000)
 		return
 	end
 	net.log("Port " .. dcsc.port .. " bound")
@@ -89,10 +105,14 @@ end
 
 function dcsc.step()
 	if not dcsc.client then
+		local bp = dcsc.JSON:encode(dcsc.broadcastPayload)
+		dcsc.broadcaster:send(bp)
 		dcsc.client = dcsc.tcp:accept()
 		if dcsc.client then
 			dcsc.client:settimeout(0)
 			net.log("Connection established")
+		else
+			net.log("Broadcast binding port " .. dcsc.port)
 		end
 	end
 	if dcsc.client then

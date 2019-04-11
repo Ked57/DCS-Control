@@ -1,5 +1,13 @@
-import { initDCSModule, send } from "./dcs/main";
+import { initDCSModule } from "./dcs/main";
 import express from "express";
+import {
+  initBroadcastListener,
+  isBroadcasterPayload
+} from "./manager/manager_network";
+import {
+  shouldCreateANewDCSModule,
+  registerDCSModule
+} from "./manager/manager";
 
 const app = express();
 app.listen(3000, () =>
@@ -7,9 +15,15 @@ app.listen(3000, () =>
     "DCS-Control server started successfuly and listening to port 3000"
   )
 );
-
-initDCSModule();
-setInterval(
-  () => send({}, () => console.log("server isn't dead yet"), "noTimeout"),
-  5000
-);
+initBroadcastListener(async (data: Buffer) => {
+  const payload = JSON.parse(data.toString());
+  console.log(payload);
+  if (!isBroadcasterPayload(payload)) {
+    console.error("Received a wrong broadcast payload");
+    return;
+  }
+  console.log("port is ", payload.port);
+  if (shouldCreateANewDCSModule(payload)) {
+    registerDCSModule(await initDCSModule(payload.port));
+  }
+});
