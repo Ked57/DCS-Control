@@ -1,4 +1,3 @@
-import * as net from "net";
 import { validatePayload, dataFromDcsJsonToObject } from "./payload_validator";
 import { connect, networkSend } from "./network/network_manager";
 import {
@@ -63,6 +62,7 @@ const send = async (
 
 const receive = async (data: { [key: string]: any }) => {
   try {
+    console.log("received", data);
     await handlePayload(await validatePayload(data));
     return true;
   } catch (err) {

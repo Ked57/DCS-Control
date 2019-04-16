@@ -109,7 +109,6 @@ const networkSend = (data: InputPayload) => {
     return;
   }
   const jsonData = JSON.stringify(data);
-  console.log("sent", data);
   socket.write(jsonData + "\n", () => {});
 };
 

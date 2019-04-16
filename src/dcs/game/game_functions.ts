@@ -1,37 +1,15 @@
 import { send } from "../main";
 import Callback from "../dispatcher/types/callback";
 
-const spawnGroup = (groupName: string, callback: Callback) => {
+const tooglePause = (callback: Callback) => {
   send(
     {
-      name: "spawnInZone",
-      args: {
-        groupName
-      }
+      name: "tooglePause",
+      args: {}
     },
     callback,
     "function"
   );
 };
 
-const spawnGroupInZone = (
-  groupName: string,
-  zoneName: string,
-  callback: Callback,
-  randomize?: boolean
-) => {
-  send(
-    {
-      name: "spawnInZone",
-      args: {
-        groupName,
-        zoneName,
-        randomize: randomize || true
-      }
-    },
-    callback,
-    "function"
-  );
-};
-
-export { spawnGroup, spawnGroupInZone };
+export { tooglePause };

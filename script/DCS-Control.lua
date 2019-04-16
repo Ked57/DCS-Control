@@ -47,6 +47,12 @@ module("DCS-Control")
 -- functions
 dcsc.functions = {}
 
+function dcsc.functions.tooglePause()
+	local pause = DCS.getPause()
+	DCS.setPause(not pause)
+	return not pause
+end
+
 -- util
 
 function dcsc.log(message)
@@ -122,8 +128,10 @@ function dcsc.step()
 			local success, error = pcall(dcsc.checkJSON, line, "decode")
 			if success then
 				local incMsg = dcsc.JSON:decode(line)
-				net.log(incMsg)
 				data = dcsc.processRequest(incMsg)
+				if not data then
+					data = {}
+				end
 			else
 				net.log("Error: " .. error)
 			end
